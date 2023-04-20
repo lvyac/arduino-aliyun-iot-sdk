@@ -35,6 +35,11 @@ static WiFiClient espClient;
 void setup()
 {
     Serial.begin(115200);
+    
+    //将引脚设为输出
+    pinMode(PIN0, OUTPUT);
+    //初始为低电平
+    digitalWrite(PIN0, LOW);
 
     WiFi.mode(WIFI_STA);
     WiFiManager wm;
@@ -71,11 +76,6 @@ void loop()
 // 初始化 wifi 连接
 void wifiInit(const char *ssid, const char *passphrase)
 {
-
-    //将引脚设为输出
-    pinMode(PIN0, OUTPUT);
-    //初始为低电平
-    digitalWrite(PIN0, LOW);
 
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, passphrase);
