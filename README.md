@@ -22,14 +22,17 @@ static WiFiClient espClient;
 #include <AliyunIoTSDK.h>
 
 // 设置产品和设备的信息，从阿里云设备信息里查看
-#define PRODUCT_KEY "xxx"
-#define DEVICE_NAME "Device_D"
-#define DEVICE_SECRET "xxxxxxxxxxxxxx"
+#define PRODUCT_KEY "a1YCTWpgFPI"
+#define DEVICE_NAME "esp_01"
+#define DEVICE_SECRET "ca966aab587502452b559e41287cb70f"
 #define REGION_ID "cn-shanghai"
 
+//esp8266 引脚
+#define PIN0 0
+
 // 设置 wifi 信息
-#define WIFI_SSID "xxxxx"
-#define WIFI_PASSWD "xxxxx"
+#define WIFI_SSID "hxrc"
+#define WIFI_PASSWD "abcd123456789"
 
 void setup()
 {
@@ -46,7 +49,7 @@ void setup()
     AliyunIoTSDK::bindData((char *)"PowerSwitch", powerCallback);
     
     // 发送一个数据到云平台，LightLuminance 是在设备产品中定义的物联网模型的 id
-    AliyunIoTSDK::send((char *)"LightLuminance", 100);
+    AliyunIoTSDK::send((char *)"PowerSwitch", 1);
 }
 
 void loop()
@@ -57,6 +60,12 @@ void loop()
 // 初始化 wifi 连接
 void wifiInit(const char *ssid, const char *passphrase)
 {
+
+    //将引脚设为输出
+    pinMode(PIN0, OUTPUT);
+    //初始为低电平
+    digitalWrite(PIN0, LOW);
+
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, passphrase);
     while (WiFi.status() != WL_CONNECTED)
@@ -70,10 +79,16 @@ void wifiInit(const char *ssid, const char *passphrase)
 // 电源属性修改的回调函数
 void powerCallback(JsonVariant p)
 {
+    Serial.println("回调函数");
+
     int PowerSwitch = p["PowerSwitch"];
     if (PowerSwitch == 1)
     {
-        // 启动设备
+      digitalWrite(PIN0, HIGH);
+      Serial.println("开");
+    }else{
+      digitalWrite(PIN0, LOW);
+      Serial.println("关");
     } 
 }
 ```
@@ -159,9 +174,13 @@ void powerCallback(JsonVariant p)
   static int unbindData(char *key);
 ```
 
-## Examples 示例
+## 阿里云API
 
-buiding...
+```html
+设备运行状态[在线、离线]https://next.api.aliyun.com/document/Iot/2018-01-20/GetDeviceStatus
+修改设备属性[开、关] https://next.api.aliyun.com/api/Iot/2018-01-20/SetDeviceProperty?lang=PHP
+设备详情：https://next.api.aliyun.com/document/Iot/2018-01-20/QueryDeviceDetail
+```
 
 ## Limitations 使用限制和说明
 
