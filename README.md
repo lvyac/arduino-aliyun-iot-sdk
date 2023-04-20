@@ -23,39 +23,30 @@ static WiFiClient espClient;
 #include <AliyunIoTSDK.h>
 
 // 设置产品和设备的信息，从阿里云设备信息里查看
-#define PRODUCT_KEY "a1YCT*****I"
+#define PRODUCT_KEY "a1YCTWpgFPI"
 #define DEVICE_NAME "esp_01"
-#define DEVICE_SECRET "ca966aab587502452b*****1287cb70f"
+#define DEVICE_SECRET "ca966aab587502452b559e41287cb70f"
 #define REGION_ID "cn-shanghai"
 
 //esp8266 引脚
 #define PIN0 0
 
+//Ap名称
+#define AP_NAME "chh_app_wifi_config"
+//Ap密码
+#define AP_PASSWORD "12345678"
+
 
 void setup()
 {
     Serial.begin(115200);
-    
+
     //将引脚设为输出
     pinMode(PIN0, OUTPUT);
     //初始为低电平
     digitalWrite(PIN0, LOW);
 
-    WiFi.mode(WIFI_STA);
-    WiFiManager wm;
-
-    bool res;
-    res = wm.autoConnect("chh_app_wifi_config", "12345678");
-    if (!res) {
-      Serial.println("Failed to connect");
-      wm.resetSettings();
-      ESP.restart();
-    }else{
-      // 初始化 wifi
-      wifiInit(wm.getWiFiSSID().c_str(), wm.getWiFiPass().c_str());
-    }
-    
-    
+    wifiInit(AP_NAME, AP_PASSWORD);
     
     // 初始化 iot，需传入 wifi 的 client，和设备产品信息
     AliyunIoTSDK::begin(espClient, PRODUCT_KEY, DEVICE_NAME, DEVICE_SECRET, REGION_ID);
@@ -64,8 +55,8 @@ void setup()
     // PowerSwitch 是在设备产品中定义的物联网模型的 id
     AliyunIoTSDK::bindData((char *)"PowerSwitch", powerCallback);
     
-    // 发送一个数据到云平台，LightLuminance 是在设备产品中定义的物联网模型的 id
-    AliyunIoTSDK::send((char *)"PowerSwitch", 1);
+    // 发送一个数据到云平台，PowerSwitch 是在设备产品中定义的物联网模型的 id
+    AliyunIoTSDK::send((char *)"PowerSwitch", 0);
 }
 
 void loop()
@@ -74,24 +65,34 @@ void loop()
 }
 
 // 初始化 wifi 连接
-void wifiInit(const char *ssid, const char *passphrase)
+void wifiInit(const char *apNme, const char *passphrase)
 {
 
     WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, passphrase);
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(1000);
-        Serial.println("WiFi not Connect");
+    WiFiManager wm;
+    
+    bool res;
+    res = wm.autoConnect(apNme, passphrase);
+    if (!res) {
+      Serial.println("Failed to connect");
+      wm.resetSettings();
+      ESP.restart();
+    }else {
+      WiFi.begin(wm.getWiFiSSID().c_str(), wm.getWiFiPass().c_str());
+      while (WiFi.status() != WL_CONNECTED)
+      {
+          delay(1000);
+          Serial.println("WiFi not Connect");
+      }
+      Serial.println("Connected to AP");
     }
-    Serial.println("Connected to AP");
+    
+    
 }
 
 // 电源属性修改的回调函数
 void powerCallback(JsonVariant p)
 {
-    Serial.println("回调函数");
-
     int PowerSwitch = p["PowerSwitch"];
     if (PowerSwitch == 1)
     {
