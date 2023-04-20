@@ -177,9 +177,11 @@ void powerCallback(JsonVariant p)
 ## 阿里云API
 
 ```html
-设备运行状态[在线、离线]https://next.api.aliyun.com/document/Iot/2018-01-20/GetDeviceStatus
+查询指定产品下的所有设备列表 https://next.api.aliyun.com/document/Iot/2018-01-20/QueryDevice
+查询设备属性[开、关] https://next.api.aliyun.com/document/Iot/2018-01-20/QueryDeviceDesiredProperty
+查询设备运行状态[在线、离线]https://next.api.aliyun.com/document/Iot/2018-01-20/GetDeviceStatus
+查询设备详情：https://next.api.aliyun.com/document/Iot/2018-01-20/QueryDeviceDetail
 修改设备属性[开、关] https://next.api.aliyun.com/api/Iot/2018-01-20/SetDeviceProperty?lang=PHP
-设备详情：https://next.api.aliyun.com/document/Iot/2018-01-20/QueryDeviceDetail
 ```
 
 ## Limitations 使用限制和说明
