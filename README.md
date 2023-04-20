@@ -43,10 +43,10 @@ void setup()
     
     // 绑定一个设备属性回调，当远程修改此属性，会触发 powerCallback
     // PowerSwitch 是在设备产品中定义的物联网模型的 id
-    AliyunIoTSDK::bindData("PowerSwitch", powerCallback);
+    AliyunIoTSDK::bindData((char *)"PowerSwitch", powerCallback);
     
     // 发送一个数据到云平台，LightLuminance 是在设备产品中定义的物联网模型的 id
-    AliyunIoTSDK::send("LightLuminance", 100);
+    AliyunIoTSDK::send((char *)"LightLuminance", 100);
 }
 
 void loop()
