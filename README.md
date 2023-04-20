@@ -22,9 +22,9 @@ static WiFiClient espClient;
 #include <AliyunIoTSDK.h>
 
 // 设置产品和设备的信息，从阿里云设备信息里查看
-#define PRODUCT_KEY "a1YCTWpgFPI"
+#define PRODUCT_KEY "a1YC***gFPI"
 #define DEVICE_NAME "esp_01"
-#define DEVICE_SECRET "ca966aab587502452b559e41287cb70f"
+#define DEVICE_SECRET "ca966aab587*********1287cb70f"
 #define REGION_ID "cn-shanghai"
 
 //esp8266 引脚
