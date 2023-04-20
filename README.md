@@ -8,7 +8,7 @@
 - v0.1 上线
 
 ## 依赖项
-- Arduino需要安装 ArduinoJson,Crypto,PubSubClient库
+- Arduino需要安装 ArduinoJson,Crypto,PubSubClient,WiFiManager库
 - Esp8266 需要在Arduino中安装 [ESP8266库](https://github.com/esp8266/Arduino)
 
 ## Usage 使用示例
@@ -16,30 +16,41 @@
 ```c++
 // 引入 wifi 模块，并实例化，不同的芯片这里的依赖可能不同
 #include <ESP8266WiFi.h>
+#include <WiFiManager.h>
 static WiFiClient espClient;
 
 // 引入阿里云 IoT SDK
 #include <AliyunIoTSDK.h>
 
 // 设置产品和设备的信息，从阿里云设备信息里查看
-#define PRODUCT_KEY "a1YC***gFPI"
+#define PRODUCT_KEY "a1YCT*****I"
 #define DEVICE_NAME "esp_01"
-#define DEVICE_SECRET "ca966aab587*********1287cb70f"
+#define DEVICE_SECRET "ca966aab587502452b*****1287cb70f"
 #define REGION_ID "cn-shanghai"
 
 //esp8266 引脚
 #define PIN0 0
 
-// 设置 wifi 信息
-#define WIFI_SSID "hxrc"
-#define WIFI_PASSWD "abcd123456789"
 
 void setup()
 {
     Serial.begin(115200);
+
+    WiFi.mode(WIFI_STA);
+    WiFiManager wm;
+
+    bool res;
+    res = wm.autoConnect("chh_app_wifi_config", "12345678");
+    if (!res) {
+      Serial.println("Failed to connect");
+      wm.resetSettings();
+      ESP.restart();
+    }else{
+      // 初始化 wifi
+      wifiInit(wm.getWiFiSSID().c_str(), wm.getWiFiPass().c_str());
+    }
     
-    // 初始化 wifi
-    wifiInit(WIFI_SSID, WIFI_PASSWD);
+    
     
     // 初始化 iot，需传入 wifi 的 client，和设备产品信息
     AliyunIoTSDK::begin(espClient, PRODUCT_KEY, DEVICE_NAME, DEVICE_SECRET, REGION_ID);
